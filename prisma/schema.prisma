@@ -1,0 +1,187 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  extensions = [vector]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum DocumentType {
+  CV
+  TRANSCRIPT
+}
+
+enum ParseStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum DegreeLevel {
+  BACHELOR
+  MASTER
+}
+
+enum PurchaseStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum EntitlementStatus {
+  ACTIVE
+  EXPIRED
+  REVOKED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  profiles      Profile[]
+  documents     Document[]
+  matchRuns     MatchRun[]
+  purchases     Purchase[]
+  entitlements  Entitlement[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Profile {
+  id              String        @id @default(cuid())
+  userId          String
+  mode            DegreeLevel
+  personalJson    Json?
+  educationJson   Json?
+  testsJson       Json?
+  languagesJson   Json?
+  experiencesJson Json?
+  projectsJson    Json?
+  goalsJson       Json?
+  prefsJson       Json?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matchRuns       MatchRun[]
+
+  @@index([userId])
+}
+
+model Document {
+  id            String        @id @default(cuid())
+  userId        String
+  type          DocumentType
+  url           String
+  extractedText String?       @db.Text
+  parseStatus   ParseStatus   @default(PENDING)
+  createdAt     DateTime      @default(now())
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Program {
+  id              String        @id @default(cuid())
+  country         String        // DE, IT, PL, etc.
+  degreeLevel     DegreeLevel
+  universityName  String
+  programName     String
+  language        String        // EN, DE, IT, PL
+  description     String?       @db.Text
+  keywords        String?       @db.Text
+  tuitionInfo     String?
+  rankingQs       String?
+  embedding       Unsupported("vector(1536)")?
+  createdAt       DateTime      @default(now())
+
+  matchResults    MatchResult[]
+
+  @@unique([country, degreeLevel, universityName, programName, language])
+  @@index([country, degreeLevel])
+  @@index([language])
+}
+
+model MatchRun {
+  id                String        @id @default(cuid())
+  userId            String
+  profileId         String
+  selectedCountries String[]
+  selectedLanguages String[]
+  requestedCount    Int           @default(20)
+  createdAt         DateTime      @default(now())
+
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile           Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  results           MatchResult[]
+
+  @@index([userId])
+  @@index([profileId])
+}
+
+model MatchResult {
+  id              String   @id @default(cuid())
+  matchRunId      String
+  programId       String
+  similarityScore Float
+  preScore        Float
+  llmScore        Float
+  finalScore      Float
+  llmJson         Json?
+  createdAt       DateTime @default(now())
+
+  matchRun        MatchRun @relation(fields: [matchRunId], references: [id], onDelete: Cascade)
+  program         Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@unique([matchRunId, programId])
+  @@index([matchRunId])
+  @@index([finalScore])
+}
+
+model Purchase {
+  id              String          @id @default(cuid())
+  userId          String
+  stripeSessionId String          @unique
+  amount          Int             // in cents
+  currency        String          @default("USD")
+  status          PurchaseStatus  @default(PENDING)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([stripeSessionId])
+}
+
+model Entitlement {
+  id        String              @id @default(cuid())
+  userId    String
+  type      String              // "FULL_RESULTS_UNLOCK"
+  status    EntitlementStatus   @default(ACTIVE)
+  createdAt DateTime            @default(now())
+  expiresAt DateTime?
+
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type, status])
+}
