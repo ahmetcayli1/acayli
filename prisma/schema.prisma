@@ -1,0 +1,168 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  extensions = [vector]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum DocumentType {
+  CV
+  TRANSCRIPT
+}
+
+enum ParseStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum DegreeLevel {
+  BACHELOR
+  MASTER
+}
+
+enum EntitlementType {
+  FULL_RESULTS_UNLOCK
+}
+
+enum EntitlementStatus {
+  ACTIVE
+  EXPIRED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+
+  profile       Profile?
+  documents     Document[]
+  matchRuns     MatchRun[]
+  purchases     Purchase[]
+  entitlements  Entitlement[]
+}
+
+model Profile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  
+  mode            DegreeLevel // BACHELOR or MASTER
+  
+  personalJson    Json?
+  educationJson   Json?
+  testsJson       Json?
+  languagesJson   Json?
+  experiencesJson Json?
+  projectsJson    Json?
+  goalsJson       Json?
+  prefsJson       Json?
+  
+  updatedAt       DateTime @updatedAt
+  
+  matchRuns       MatchRun[]
+}
+
+model Document {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  
+  type          DocumentType
+  url           String
+  extractedText String?      @db.Text
+  parseStatus   ParseStatus  @default(PENDING)
+  
+  createdAt     DateTime     @default(now())
+}
+
+model Program {
+  id             String      @id @default(cuid())
+  country        String
+  degreeLevel    DegreeLevel
+  universityName String
+  programName    String
+  language       String
+  
+  description    String?
+  keywords       String?
+  tuitionInfo    String?
+  rankingQs      String?
+  
+  embedding      Unsupported("vector(1536)")?
+  
+  createdAt      DateTime    @default(now())
+  
+  matchResults   MatchResult[]
+  
+  @@unique([country, degreeLevel, universityName, programName, language])
+}
+
+model MatchRun {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  
+  profileId         String
+  profile           Profile  @relation(fields: [profileId], references: [id])
+  
+  selectedCountries String[]
+  selectedLanguages String[]
+  requestedCount    Int      @default(10)
+  
+  createdAt         DateTime @default(now())
+  
+  results           MatchResult[]
+}
+
+model MatchResult {
+  id              String   @id @default(cuid())
+  matchRunId      String
+  matchRun        MatchRun @relation(fields: [matchRunId], references: [id])
+  
+  programId       String
+  program         Program  @relation(fields: [programId], references: [id])
+  
+  similarityScore Float // 0-100
+  preScore        Float // 0-100
+  llmScore        Float // 0-100
+  finalScore      Float // 0-100
+  
+  llmJson         Json? // Detailed analysis from LLM
+}
+
+model Purchase {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  
+  stripeSessionId String   @unique
+  amount          Float
+  currency        String
+  status          String
+  
+  createdAt       DateTime @default(now())
+}
+
+model Entitlement {
+  id        String            @id @default(cuid())
+  userId    String
+  user      User              @relation(fields: [userId], references: [id])
+  
+  type      EntitlementType
+  status    EntitlementStatus @default(ACTIVE)
+  
+  createdAt DateTime          @default(now())
+  expiresAt DateTime?
+}
