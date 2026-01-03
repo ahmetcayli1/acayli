@@ -1,0 +1,158 @@
+{
+  "DE": {
+    "bachelor": {
+      "required_tests": ["SAT", "ACT"],
+      "optional_tests": [],
+      "language_tests": ["TOEFL", "IELTS", "TestDaF"]
+    },
+    "master": {
+      "required_tests": ["GRE"],
+      "optional_tests": ["GMAT"],
+      "language_tests": ["TOEFL", "IELTS", "TestDaF"]
+    }
+  },
+  "IT": {
+    "bachelor": {
+      "required_tests": ["SAT"],
+      "optional_tests": ["ACT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    },
+    "master": {
+      "required_tests": [],
+      "optional_tests": ["GRE", "GMAT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    }
+  },
+  "PL": {
+    "bachelor": {
+      "required_tests": [],
+      "optional_tests": ["SAT", "ACT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    },
+    "master": {
+      "required_tests": [],
+      "optional_tests": ["GRE", "GMAT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    }
+  },
+  "NL": {
+    "bachelor": {
+      "required_tests": [],
+      "optional_tests": ["SAT", "ACT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    },
+    "master": {
+      "required_tests": [],
+      "optional_tests": ["GRE", "GMAT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    }
+  },
+  "GB": {
+    "bachelor": {
+      "required_tests": [],
+      "optional_tests": ["SAT", "ACT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    },
+    "master": {
+      "required_tests": [],
+      "optional_tests": ["GRE", "GMAT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    }
+  },
+  "US": {
+    "bachelor": {
+      "required_tests": ["SAT"],
+      "optional_tests": ["ACT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    },
+    "master": {
+      "required_tests": ["GRE"],
+      "optional_tests": ["GMAT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    }
+  },
+  "CA": {
+    "bachelor": {
+      "required_tests": [],
+      "optional_tests": ["SAT", "ACT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    },
+    "master": {
+      "required_tests": [],
+      "optional_tests": ["GRE", "GMAT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    }
+  },
+  "FR": {
+    "bachelor": {
+      "required_tests": [],
+      "optional_tests": ["SAT"],
+      "language_tests": ["TOEFL", "IELTS", "DELF"]
+    },
+    "master": {
+      "required_tests": [],
+      "optional_tests": ["GRE", "GMAT"],
+      "language_tests": ["TOEFL", "IELTS", "DALF"]
+    }
+  },
+  "ES": {
+    "bachelor": {
+      "required_tests": [],
+      "optional_tests": ["SAT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    },
+    "master": {
+      "required_tests": [],
+      "optional_tests": ["GRE", "GMAT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    }
+  },
+  "PT": {
+    "bachelor": {
+      "required_tests": [],
+      "optional_tests": ["SAT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    },
+    "master": {
+      "required_tests": [],
+      "optional_tests": ["GRE"],
+      "language_tests": ["TOEFL", "IELTS"]
+    }
+  },
+  "AU": {
+    "bachelor": {
+      "required_tests": [],
+      "optional_tests": ["SAT", "ACT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    },
+    "master": {
+      "required_tests": [],
+      "optional_tests": ["GRE", "GMAT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    }
+  },
+  "HU": {
+    "bachelor": {
+      "required_tests": [],
+      "optional_tests": ["SAT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    },
+    "master": {
+      "required_tests": [],
+      "optional_tests": ["GRE"],
+      "language_tests": ["TOEFL", "IELTS"]
+    }
+  },
+  "GR": {
+    "bachelor": {
+      "required_tests": [],
+      "optional_tests": ["SAT"],
+      "language_tests": ["TOEFL", "IELTS"]
+    },
+    "master": {
+      "required_tests": [],
+      "optional_tests": ["GRE"],
+      "language_tests": ["TOEFL", "IELTS"]
+    }
+  }
+}
